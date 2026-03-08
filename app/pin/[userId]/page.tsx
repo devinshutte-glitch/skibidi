@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useParams } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
 import PinPad from '@/components/PinPad'
 import AvatarComponent from '@/components/AvatarComponent'
@@ -13,8 +13,9 @@ const THEME_GRADIENTS: Record<string, string> = {
   palm: 'linear-gradient(180deg, #2d7a3c 0%, #246330 50%, #1a4d24 100%)',
 }
 
-export default function PinPage({ params }: { params: { userId: string } }) {
+export default function PinPage() {
   const router = useRouter()
+  const params = useParams<{ userId: string }>()
   const { setCurrentUser } = useAuth()
   const [user, setUser] = useState<User | null>(null)
   const [error, setError] = useState<string | null>(null)
