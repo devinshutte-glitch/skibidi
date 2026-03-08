@@ -4,17 +4,18 @@ import { getWeekNumber } from '@/lib/utils'
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { userId: string; weekNumber: string } }
+  { params }: { params: Promise<{ userId: string; weekNumber: string }> }
 ) {
+  const { userId, weekNumber: weekNumberParam } = await params
   const supabase = createServiceClient()
   const { year } = getWeekNumber()
-  const weekNumber = parseInt(params.weekNumber)
+  const weekNumber = parseInt(weekNumberParam)
 
   // Get all questions for this user/week
   const { data: questions, error } = await supabase
     .from('question_bank')
     .select('*')
-    .eq('user_id', params.userId)
+    .eq('user_id', userId)
     .eq('week_number', weekNumber)
     .eq('year', year)
 
@@ -26,7 +27,7 @@ export async function GET(
   const { data: answered } = await supabase
     .from('answers')
     .select('question_id')
-    .eq('user_id', params.userId)
+    .eq('user_id', userId)
     .eq('week_number', weekNumber)
 
   const answeredIds = new Set((answered || []).map((a) => a.question_id))

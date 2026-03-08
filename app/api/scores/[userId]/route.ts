@@ -4,8 +4,9 @@ import { getWeekNumber } from '@/lib/utils'
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { userId: string } }
+  { params }: { params: Promise<{ userId: string }> }
 ) {
+  const { userId } = await params
   const supabase = createServiceClient()
   const { week, year } = getWeekNumber()
 
@@ -13,7 +14,7 @@ export async function GET(
   const { data: weekScore } = await supabase
     .from('weekly_scores')
     .select('*')
-    .eq('user_id', params.userId)
+    .eq('user_id', userId)
     .eq('week_number', week)
     .eq('year', year)
     .single()
@@ -22,7 +23,7 @@ export async function GET(
   const { data: allScores } = await supabase
     .from('weekly_scores')
     .select('*')
-    .eq('user_id', params.userId)
+    .eq('user_id', userId)
     .eq('is_complete', true)
     .order('week_number', { ascending: false })
 
@@ -36,7 +37,7 @@ export async function GET(
   const { data: streak } = await supabase
     .from('streaks')
     .select('*')
-    .eq('user_id', params.userId)
+    .eq('user_id', userId)
     .single()
 
   // Get weakness (lowest subject this week)

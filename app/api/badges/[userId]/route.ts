@@ -3,14 +3,15 @@ import { createServiceClient } from '@/lib/supabase/server'
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { userId: string } }
+  { params }: { params: Promise<{ userId: string }> }
 ) {
+  const { userId } = await params
   const supabase = createServiceClient()
 
   const { data: badges, error } = await supabase
     .from('badges')
     .select('*')
-    .eq('user_id', params.userId)
+    .eq('user_id', userId)
     .order('earned_at', { ascending: false })
 
   if (error) {
