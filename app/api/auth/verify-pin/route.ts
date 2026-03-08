@@ -20,6 +20,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'User not found' }, { status: 404 })
   }
 
+  const PLACEHOLDER_HASH = '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'
+  if (user.pin_hash === PLACEHOLDER_HASH) {
+    return NextResponse.json({ error: 'first_login' }, { status: 401 })
+  }
+
   const valid = await bcrypt.compare(pin, user.pin_hash)
   if (!valid) {
     return NextResponse.json({ error: 'Invalid PIN' }, { status: 401 })

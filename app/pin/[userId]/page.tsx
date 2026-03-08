@@ -56,19 +56,10 @@ export default function PinPage() {
 
         const data = await verifyRes.json()
 
-        // If this is the first time (placeholder hash), treat as setup
-        if (data.error === 'Invalid PIN' && !isFirstLogin) {
-          // Try against placeholder '0000'
-          const checkRes = await fetch('/api/auth/verify-pin', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId: params.userId, pin: '0000' }),
-          })
-          if (checkRes.ok) {
-            setIsFirstLogin(true)
-            setIsLoading(false)
-            return
-          }
+        if (data.error === 'first_login') {
+          setIsFirstLogin(true)
+          setIsLoading(false)
+          return
         }
 
         setError('Wrong PIN — try again')
